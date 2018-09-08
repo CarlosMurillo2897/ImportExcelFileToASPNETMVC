@@ -1,0 +1,33 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Success</title>
+</head>
+<body>
+    <h3>User's List</h3>
+    <table cellpadding="2" cellspacing="2" border="1">
+        <tr>
+            <th>Id</th>
+            <th>Cedula</th>
+            <th>Contraseña</th>
+            <th>Fecha</th>
+        </tr>
+        @foreach(var u in ViewBag.ListUsrs)
+        {
+        <tr>
+            <td>@u.id</td>
+            <td>@u.cedula</td>
+            <td>@u.contrasena</td>
+            <td>@u.fecha_expiracion</td>
+        </tr>
+        }
+    </table>
+</body>
+</html>
