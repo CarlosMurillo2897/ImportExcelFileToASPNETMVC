@@ -30,11 +30,32 @@ namespace ImportExcelFileToASPNETMVC.Controllers
             {
                 if (excelfile.FileName.EndsWith("xls") || excelfile.FileName.EndsWith("xlsx"))
                 {
-                    string path = Server.MapPath("~/Content/" + excelfile.FileName);
+                    int fin;
+                    string terminacion;
+
+                    if (excelfile.FileName.EndsWith("xlsx")) {
+                        fin = excelfile.FileName.Length - 5;
+                        terminacion = ").xlsx";
+                    }
+                    else {
+                        fin = excelfile.FileName.Length - 4;
+                        terminacion = ").xls";
+                    }
+
+                    string name = excelfile.FileName.Substring(0, fin);
+
+                    string path = Server.MapPath("~/Content/" + name +
+                                                 "(" + DateTime.Now.Year.ToString() +  "-"
+                                                 + DateTime.Now.Month.ToString()    +  "-"
+                                                 + DateTime.Now.Day.ToString()      + ")-("
+                                                 + DateTime.Now.Hour.ToString()     +  "-"
+                                                 + DateTime.Now.Minute.ToString()   +  "-"
+                                                 + DateTime.Now.Second.ToString()   +  terminacion);
+
                     if (System.IO.File.Exists(path))
                         System.IO.File.Delete(path);
                     excelfile.SaveAs(path);
-                    // Read data from an excel file
+                    
                     Excel.Application application = new Excel.Application();
                     Excel.Workbook workbook = application.Workbooks.Open(path);
                     Excel.Worksheet worksheet = workbook.ActiveSheet;
@@ -52,6 +73,23 @@ namespace ImportExcelFileToASPNETMVC.Controllers
                         db.SaveChanges();
                     }
                     ViewBag.ListUsrs = usrs;
+
+                    //¿Necessary to close the process?
+                    workbook.Close();
+
+                    System.Diagnostics.Process[] process = System.Diagnostics.Process.GetProcessesByName("Excel");
+                    foreach (System.Diagnostics.Process p in process)
+                    {
+                        if (!string.IsNullOrEmpty(p.ProcessName))
+                        {
+                            try
+                            {
+                                p.Kill();
+                            }
+                            catch { }
+                        }
+                    }
+
 
                     return View("Success");
                 }
